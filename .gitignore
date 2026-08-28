@@ -15,3 +15,7 @@ client_secret*.json
 *.p12
 *.xlsx
 *.xls
+
+.vercel
+.env*
+!.env.example

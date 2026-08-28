@@ -1,5 +1,25 @@
 project_id = "programacion-labores-de-campo"
 
+[auth]
+site_url = "https://programacion-labores-de-campo.vercel.app"
+additional_redirect_urls = ["https://programacion-labores-de-campo.vercel.app/auth/callback", "http://127.0.0.1:5173/auth/callback"]
+# Permite la primera entrada Google SOLO si el hook aprueba la cuenta.
+enable_signup = true
+enable_anonymous_sign_ins = false
+
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/public/web2_before_user_created"
+
+[auth.external.google]
+enabled = true
+client_id = "433631251791-9fbhsfcemclnb31ekdp7j479p726a8mr.apps.googleusercontent.com"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_SECRET)"
+skip_nonce_check = false
+
+# Proveedor Email deshabilitado en el panel alojado. No ejecutar auth config
+# push automáticamente: el historial de migraciones aplicadas por UI debe conciliarse.
+
 [functions.web1-probe]
 # El handler valida una credencial exclusiva antes de leer bytes o ejecutar el parser.
 # No acepta anon keys ni tokens de sesión como sustitutos de esta credencial.

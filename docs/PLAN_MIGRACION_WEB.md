@@ -2,7 +2,8 @@
 
 Fecha: 28 de agosto de 2026.
 
-Estado: autorizado iniciar únicamente WEB 1. Las etapas WEB son independientes
+Estado: WEB 1 realizada y WEB 2 autorizada expresamente por el usuario; véase
+[entrega WEB 2](WEB_2_ESTADO.md). Las etapas WEB son independientes
 de los bloques históricos de escritorio. No se autorizan cobros.
 Actualización: el usuario aporta proyectos existentes en Supabase y Vercel;
 este último sustituye la propuesta inicial de frontend en Cloudflare,

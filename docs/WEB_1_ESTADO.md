@@ -1,5 +1,8 @@
 # WEB 1 — Informe parcial de viabilidad
 
+Informe histórico de WEB 1. La autorización posterior y entrega de WEB 2 están
+en [WEB_2_ESTADO.md](WEB_2_ESTADO.md); los límites siguientes corresponden a este bloque.
+
 Fecha: 28 de agosto de 2026.
 
 Estado: preparación local, acceso a los paneles y prueba privada alojada

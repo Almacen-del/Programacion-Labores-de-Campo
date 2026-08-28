@@ -1,0 +1,15 @@
+.git/
+.private/
+.env*
+!.env.example
+node_modules/
+docs/
+supabase/
+tests/
+scripts/
+src/importer/*
+!src/importer/types.ts
+dist/
+coverage/
+*.xlsx
+*.sqlite*

@@ -3,19 +3,30 @@
   "version": "0.1.0-web1",
   "private": true,
   "type": "module",
-  "description": "WEB 1: laboratorio independiente de viabilidad, sin despliegue",
+  "description": "Control de labores: web privada con sincronización de Drive",
   "license": "UNLICENSED",
   "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
     "build:probe": "node scripts/build-probe.mjs",
     "test": "npm run build:probe && node --test tests/*.test.mjs",
     "benchmark": "npm run build:probe && node scripts/benchmark.mjs",
     "verify:desktop": "node scripts/snapshot-desktop.mjs --verify"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.112.4",
     "google-auth-library": "11.0.2",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "read-excel-file": "9.3.10"
   },
   "devDependencies": {
-    "esbuild": "0.28.2"
+    "@electric-sql/pglite": "0.5.8",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2",
+    "vite": "8.2.2"
   }
 }

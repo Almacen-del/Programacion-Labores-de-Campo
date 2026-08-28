@@ -9,17 +9,16 @@ Ubicación actual: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web\Program
 - [Supabase](https://supabase.com/dashboard/project/dziwhbjyvxdbplthpazt): proyecto seleccionado para base de datos y sincronización.
 - [Vercel](https://vercel.com/almacen-2787s-projects/programacion-labores-de-campo): frontend en Hobby para el uso personal declarado; sustituye la propuesta inicial de Cloudflare.
 
-La existencia de estas referencias no significa que la aplicación esté
-conectada o funcionando. Ambos paneles ya son accesibles. Vercel tiene un
-despliegue inicial Ready, pero la dirección devuelve 404: falta la interfaz.
-Ver [estado de los servicios](docs/PROYECTOS_WEB.md).
+WEB 2 publicada: [abrir aplicación](https://programacion-labores-de-campo.vercel.app).
+Acceso privado con Google; registros, alertas y estado del maestro de solo lectura.
+Ver [entrega y pendientes actuales](docs/WEB_2_ESTADO.md).
 
 ## Alcance actual
 
-WEB 1: prueba de viabilidad para un solo usuario con objetivo de costo cero.
-Vercel y Supabase son los proyectos proporcionados; cuotas, plan y condiciones
-de uso deben comprobarse antes de aprobar la arquitectura.
-No es todavía la migración completa ni un sitio publicado.
+WEB 1: viabilidad y sincronización automática. WEB 2: base web privada implementada
+por autorización expresa del usuario. No es todavía la migración completa:
+Gantt, inventario funcional y demás módulos mantienen sus etapas posteriores.
+Objetivo de costo cero dentro de las cuotas verificadas, sin garantía de consumo ilimitado.
 
 El proyecto original `Análisis de datos Arles SAS` se utiliza solo como fuente
 de referencia. No se modifica su código, SQLite ni credenciales de escritorio.
@@ -35,10 +34,11 @@ públicos sus archivos ni se activan planes de pago.
 
 Acceso previsto: administrador temporal `almacen@arlessas.com` durante
 pruebas e ingeniero `dir.siembrasnuevas@arlessas.com` como usuario definitivo.
-No se han creado cuentas ni enviado invitaciones. El relevo está documentado
-en `docs/PROYECTOS_WEB.md`.
+El acceso real de la cuenta temporal está verificado. El ingeniero queda autorizado,
+pero su primera entrada requiere su participación; no se ha suplantado su identidad.
 
-- `docs/PLAN_MIGRACION_WEB.md`: copia del plan; autorizado iniciar únicamente WEB 1.
+- `docs/PLAN_MIGRACION_WEB.md`: plan por etapas; WEB 2 autorizada expresamente.
+- `docs/WEB_2_ESTADO.md`: publicación, acceso, pruebas y pendientes actuales.
 - `docs/WEB_1_ESTADO.md`: evidencia y pendientes de la etapa.
 - `docs/WEB_1_OAUTH.md`: conexión Drive web verificada, seguridad y límites.
 
@@ -74,8 +74,8 @@ sobrescribir uno existente. La verificación usa la ruta del manifiesto y
 sigue funcionando aunque se cambie de ubicación esta carpeta web.
 No ejecutar el respaldo de nuevo aquí.
 
-No hay interfaz funcional todavía. La sincronización automática del maestro
-ya está activa cada cinco minutos en Supabase; ver
+La interfaz WEB 2 consulta los datos privados. La sincronización automática del maestro
+está activa cada cinco minutos en Supabase; ver
 [configuración y evidencia](docs/WEB_1_SINCRONIZACION.md).
 La [prueba privada de servidor](docs/WEB_1_PRUEBA_PRIVADA.md) está desplegada
 en Supabase: rechazos de seguridad verificados y maestro procesado con el
@@ -84,5 +84,6 @@ la sincronización está implementada por separado en `master-sync`.
 
 OAuth de Drive conectado con `almacen@arlessas.com`: Supabase ya renovó el
 token y leyó los metadatos del maestro. La app Google sigue en Prueba; falta
-resolver la duración del consentimiento antes del uso continuo. Esto no es
-todavía el login de usuario. El maestro y el escritorio permanecen intactos.
+resolver la duración del consentimiento antes del uso continuo. El login de usuario
+de WEB 2 usa otro cliente OAuth, separado del acceso a Drive y del escritorio.
+El maestro y el escritorio permanecen intactos.

@@ -104,8 +104,8 @@ manifiesto: ya no depende de que el proyecto web sea una carpeta hermana.
 
 1. Sesiones y planes verificados en ambos paneles; no repetir el inicio de sesión.
 2. Cuentas confirmadas: administrador temporal e ingeniero según la tabla.
-   Falta implementar y probar su autenticación; la prueba real del ingeniero
-   requiere su participación cuando tenga disponibilidad.
+   Autenticación Google implementada en WEB 2 y acceso temporal real verificado.
+   La prueba real del ingeniero requiere su participación cuando tenga disponibilidad.
 3. Prueba privada desplegada y ejecutada; ver [guía de la prueba](WEB_1_PRUEBA_PRIVADA.md).
    Doce pruebas locales aprobadas; 401/401/422 y ejecución real 200 en Edge.
 4. Mantener el alcance personal declarado y el límite de costo cero.
@@ -118,5 +118,6 @@ manifiesto: ya no depende de que el proyecto web sea una carpeta hermana.
    en `WEB_1_SINCRONIZACION.md`; viabilidad favorable para el piloto en Free,
    no garantía de operación permanente ni consumo mensual completo medido.
 
-No se inicia WEB 2, no se compran servicios y no se toca el programa de
-escritorio como consecuencia de esta actualización.
+El cierre de WEB 1 no autorizaba etapas siguientes por sí solo. Posteriormente,
+el usuario autorizó WEB 2: véase [estado actual](WEB_2_ESTADO.md).
+No se compraron servicios ni se modificó el programa de escritorio.

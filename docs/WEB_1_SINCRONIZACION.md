@@ -1,5 +1,8 @@
 # WEB 1 — Sincronización del maestro en Supabase
 
+Evidencia histórica de WEB 1. La interfaz autorizada posteriormente se documenta
+en [WEB_2_ESTADO.md](WEB_2_ESTADO.md).
+
 Fecha: 28 de agosto de 2026. Activada por autorización del usuario.
 Estado: sincronización activa cada cinco minutos; primera carga y tres ciclos
 automáticos correctos, incluidos dos con las páginas de configuración cerradas.
