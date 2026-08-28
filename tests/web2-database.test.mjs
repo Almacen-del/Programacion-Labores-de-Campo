@@ -39,8 +39,46 @@ before(async()=>{
   await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828132000_web1_drive_oauth.sql',import.meta.url),'utf8'));
   await db.exec('alter table arles_sync_private.control add column lease_until timestamptz');
   await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828170000_web3_sync.sql',import.meta.url),'utf8'));
+  await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828183000_web4_gantt.sql',import.meta.url),'utf8'));
 });
 after(async()=>{await db?.close()});
+
+test('WEB4 Gantt y opciones privados, límites y snapshot obligatorio',async()=>{
+  await identity(null);await assert.rejects(db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31')",[hash]),/permission denied/);
+  await identity(stranger);await assert.rejects(db.query('select public.web4_gantt_options($1)',[hash]),/ACCESS_DENIED/);
+  await identity(admin);
+  await assert.rejects(db.query("select public.web4_gantt($1,'2026-01-01','2026-08-31')",[hash]),/INVALID_FILTER/);
+  await assert.rejects(db.query("select public.web4_gantt('old','2026-08-01','2026-08-31')"),/SNAPSHOT_CHANGED/);
+  await assert.rejects(db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31','{\"unknown\":\"x\"}')",[hash]),/INVALID_FILTER/);
+  await assert.rejects(db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31','{\"lot\":3}')",[hash]),/INVALID_FILTER/);
+});
+test('WEB4 excluye bloqueados y sin fecha; conserva procedencia y filtra sin sumar unidades',async()=>{
+  await identity(engineer);
+  const result=(await db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31') v",[hash])).rows[0].v;
+  assert.equal(result.metrics.records,1);assert.equal(result.metrics.undated,1);assert.equal(result.rows[0].days.length,1);
+  assert.equal(result.rows[0].days[0].date,'2026-08-01');assert.equal(result.rows[0].records,1);
+  const detail=(await db.query("select public.web4_gantt_detail($1,'2026-08-01','LOTE TEST A','Labor prueba') v",[hash])).rows[0].v;
+  assert.equal(detail.rows[0].sourceRow,2);assert.equal(detail.rows[0].rawValues,undefined);
+  const empty=(await db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31','{\"lot\":\"otro\"}') v",[hash])).rows[0].v;
+  assert.equal(empty.metrics.records,0);assert.deepEqual(empty.rows,[]);
+  const options=(await db.query('select public.web4_gantt_options($1) v',[hash])).rows[0].v;
+  assert.equal(options.latest,'2026-08-01');assert.ok(options.fields.lot.includes('LOTE TEST A'));
+});
+test('WEB4 días separados, observaciones y paginación no alteran totales',async()=>{
+  await db.exec('reset role; begin');
+  for(let i=0;i<28;i++){
+    const data={...payload.records[0],lot:'L'+i,sourceRow:10+i,workDate:'2026-08-03',collaborator:'Prueba',plantingYear:2025,input:'I',machinery:'M',validationState:'OBSERVED',alerts:[{severity:'WARNING'}]};
+    await db.query("insert into arles_web_private.records values($1,$2,'2026-08-03',$3,'Labor prueba','OBSERVED',$4)",[i+10,hash,data.lot,JSON.stringify(data)]);
+  }
+  await identity(admin);
+  const filters=JSON.stringify({collaborator:'Prueba',plantingYear:'2025',input:'I',machinery:'M',sourceSheet:'Prueba',alerts:'WITH'});
+  const first=(await db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31',$2) v",[hash,filters])).rows[0].v;
+  const next=(await db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31',$2,25) v",[hash,filters])).rows[0].v;
+  assert.equal(first.totalGroups,28);assert.equal(first.rows.length,25);assert.equal(next.rows.length,3);
+  assert.deepEqual(first.metrics,next.metrics);assert.equal(first.metrics.observed,28);
+  assert.equal(first.rows[0].days.length,1);assert.equal(first.rows[0].days[0].observed,true);
+  await db.exec('reset role; rollback');
+});
 
 test('WEB3 RPC privada y reconexión restringida al titular temporal',async()=>{
   await identity(null);await assert.rejects(db.query('select public.web3_sync_info()'),/permission denied/);

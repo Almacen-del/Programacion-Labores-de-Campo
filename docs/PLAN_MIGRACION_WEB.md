@@ -7,6 +7,8 @@ Estado: WEB 1 realizada y WEB 2 autorizada expresamente por el usuario; véase
 de los bloques históricos de escritorio. No se autorizan cobros.
 WEB 3 autorizada posteriormente; implementación y aceptación pendiente en
 [estado WEB 3](WEB_3_ESTADO.md).
+WEB 4 autorizada: Gantt de ejecución, lotes e indicadores; planificación editable
+y aceptación visual siguen sujetos a aprobación. Véase [WEB 4](WEB_4_ESTADO.md).
 Actualización: el usuario aporta proyectos existentes en Supabase y Vercel;
 este último sustituye la propuesta inicial de frontend en Cloudflare,
 sujeto a verificar plan y elegibilidad. Véase [proyectos web](PROYECTOS_WEB.md).

@@ -11,13 +11,15 @@ Ubicación actual: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web\Program
 
 Aplicación: [abrir web](https://programacion-labores-de-campo.vercel.app).
 Acceso privado con Google; registros, alertas y estado del maestro de solo lectura.
-Ver [WEB 3 y prueba operativa pendiente](docs/WEB_3_ESTADO.md).
+Ver [WEB 4: Gantt de ejecución](docs/WEB_4_ESTADO.md) y
+[WEB 3: prueba operativa pendiente](docs/WEB_3_ESTADO.md).
 
 ## Alcance actual
 
 WEB 1: viabilidad y sincronización automática. WEB 2: base web privada implementada
 por autorización expresa del usuario. No es todavía la migración completa:
-Gantt, inventario funcional y demás módulos mantienen sus etapas posteriores.
+La parte ejecutada del Gantt está implementada en WEB 4; planificación editable,
+inventario funcional y reportes mantienen sus condiciones/etapas posteriores.
 Objetivo de costo cero dentro de las cuotas verificadas, sin garantía de consumo ilimitado.
 
 El proyecto original `Análisis de datos Arles SAS` se utiliza solo como fuente
