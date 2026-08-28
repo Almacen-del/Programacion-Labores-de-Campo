@@ -40,8 +40,45 @@ before(async()=>{
   await db.exec('alter table arles_sync_private.control add column lease_until timestamptz');
   await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828170000_web3_sync.sql',import.meta.url),'utf8'));
   await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828183000_web4_gantt.sql',import.meta.url),'utf8'));
+  await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828193000_web5_inventory.sql',import.meta.url),'utf8'));
 });
 after(async()=>{await db?.close()});
+
+test('WEB5 borrador, confirmación idempotente y consulta histórica sin versiones futuras',async()=>{
+  await db.exec('reset role; begin');
+  const rejected=async(run,pattern)=>{await db.exec('savepoint expected_rejection');await assert.rejects(run(),pattern);await db.exec('rollback to savepoint expected_rejection; release savepoint expected_rejection')};
+  const sample={schema:'arles-inventory-v1',fileHash:'c'.repeat(64),fileName:'synthetic.xlsx',summary:{rows:1,review:0},warnings:[],sourceTotals:{},reconciliation:[],rows:[{ordinal:1,lot:'LOTE TEST A',sourceSheet:'Test',sourceRow:9,rawValues:[null,'LOTE TEST A'],issues:[],state:'VALID',totalAlive:null}]};
+  const stage=async(p)=>(await db.query('select public.web5_stage_inventory($1) v',[JSON.stringify(p)])).rows[0].v;
+  const created=await stage(sample);assert.equal(created.status,'DRAFT');
+  assert.equal((await stage(sample)).id,created.id);
+  await identity(admin);
+  const draft=(await db.query('select public.web5_inventory($1) v',[created.id])).rows[0].v;
+  assert.equal(draft.version.effectiveDate,null);assert.equal(draft.rows[0].totalAlive,null);assert.equal(draft.rows[0].masterMatch,true);
+  assert.equal((await db.query("select public.web5_inventory(null,'2025-08-01') v")).rows[0].v.version,null);
+  const confirm=async(date,ack=true)=>db.query('select public.web5_confirm_inventory($1,$2,$3,$4) v',[created.id,date,'Fecha sintética validada para pruebas',ack]);
+  await rejected(()=>confirm('2025-09-01',false),/INVALID_FILTER/);
+  assert.equal((await confirm('2025-09-01')).rows[0].v.status,'CONFIRMED');
+  assert.equal((await confirm('2025-09-01')).rows[0].v.status,'ALREADY_CONFIRMED');
+  await rejected(()=>confirm('2025-09-02'),/VERSION_IMMUTABLE/);
+  assert.equal((await db.query("select public.web5_inventory(null,'2025-09-02') v")).rows[0].v.version.id,created.id);
+  await db.exec('reset role');
+  const second=await stage({...sample,fileHash:'d'.repeat(64),rows:[{...sample.rows[0],totalAlive:12}]});
+  await identity(engineer);
+  const comparison=(await db.query('select public.web5_inventory($1) v',[second.id])).rows[0].v.comparison;
+  assert.equal(comparison.added,1);assert.equal(comparison.removed,1);
+  await rejected(()=>db.query("select public.web5_confirm_inventory($1,'2025-09-01','Prueba con fecha repetida',true)",[second.id]),/EFFECTIVE_DATE_EXISTS/);
+  await db.exec('reset role; rollback');
+});
+test('WEB5 acceso ajeno, escritura directa e ingesta desde frontend rechazados',async()=>{
+  await identity(null);await assert.rejects(db.query('select public.web5_inventory()'),/permission denied/);
+  await identity(stranger);await assert.rejects(db.query('select public.web5_inventory()'),/ACCESS_DENIED/);
+  await assert.rejects(db.query("select public.web5_confirm_inventory(null,'2025-01-01','Observación de prueba',true)"),/ACCESS_DENIED/);
+  assert.equal((await db.query('select * from arles_web_private.inventory_versions')).rows.length,0);
+  await identity(admin);await assert.rejects(db.query("select public.web5_stage_inventory('{}')"),/permission denied/);
+  await assert.rejects(db.query('delete from arles_web_private.inventory_versions'),/permission denied/);
+  await assert.rejects(db.query('select public.web5_inventory(null,null,-1)'),/INVALID_FILTER/);
+  await db.exec('reset role');await assert.rejects(db.query("select public.web5_stage_inventory('{}')"),/INVALID_INVENTORY/);
+});
 
 test('WEB4 Gantt y opciones privados, límites y snapshot obligatorio',async()=>{
   await identity(null);await assert.rejects(db.query("select public.web4_gantt($1,'2026-08-01','2026-08-31')",[hash]),/permission denied/);

@@ -79,6 +79,15 @@ test('sync: cuota impide reemplazo de versión; no borra datos',async()=>{
   const response=await s.call();assert.equal(response.status,502);assert.equal((await response.json()).error,'STORAGE_LIMIT');
   assert.strictEqual(s.ctx.current,prior);assert.equal(s.ctx.snapshots.length,1);
 });
+test('sync: ninguna fila elegible publica cero y una corrección posterior reaparece sin duplicarse',async()=>{
+  const s=setup();await s.call();s.ctx.meta.version='2';s.ctx.bytes=new Uint8Array([4,5,6]);
+  s.ctx.nextDocument={...parsed(),records:[],summary:{total:0,valid:0,observed:0,blocked:0,alerts:0}};
+  assert.equal((await s.call()).status,200);assert.equal(s.ctx.snapshots.at(-1).records.length,0);
+  s.ctx.meta.version='3';s.ctx.bytes=new Uint8Array([7,8,9]);s.ctx.nextDocument=parsed();
+  assert.equal((await s.call()).status,200);assert.equal(s.ctx.snapshots.at(-1).records.length,1);
+  const count=s.ctx.snapshots.length;
+  assert.equal((await (await s.call()).json()).status,'UNCHANGED');assert.equal(s.ctx.snapshots.length,count);
+});
 test('sync: evita solapamiento mientras el primer proceso sigue activo',async()=>{
   const s=setup();let release;s.ctx.pause=new Promise(resolve=>release=resolve);
   const first=s.call();while(!s.ctx.parses) await new Promise(resolve=>setTimeout(resolve,1));

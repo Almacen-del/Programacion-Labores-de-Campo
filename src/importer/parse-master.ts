@@ -140,6 +140,8 @@ export function parseSheets(sheets: Sheet[]): Pick<ParsedMasterWorkbook, "sheets
       const collaborator = textValue(getCell(row, header.columns, "collaborator"));
       const plantingYear = finiteInteger(getCell(row, header.columns, "plantingYear"));
       const lot = textValue(getCell(row, header.columns, "lot"));
+      // Exclusión reevaluada en cada lectura: completar ambos campos reincorpora la fila.
+      if (plantingYear === null || lot === null) continue;
       const labor = textValue(getCell(row, header.columns, "labor"));
       const input = textValue(getCell(row, header.columns, "input"));
       const unit = textValue(getCell(row, header.columns, "unit"));
@@ -151,10 +153,8 @@ export function parseSheets(sheets: Sheet[]): Pick<ParsedMasterWorkbook, "sheets
       const observation = textValue(getCell(row, header.columns, "observation"));
 
       if (!workDate) alerts.push(alert("INVALID_DATE", "BLOCKING", "workDate", "La fecha está incompleta o no es válida."));
-      if (!lot) alerts.push(alert("MISSING_LOT", "BLOCKING", "lot", "La fila no identifica un lote."));
       if (!labor) alerts.push(alert("MISSING_LABOR", "BLOCKING", "labor", "La fila no identifica una actividad."));
       if (!collaborator) alerts.push(alert("MISSING_COLLABORATOR", "WARNING", "collaborator", "La fila no identifica un colaborador."));
-      if (plantingYear === null) alerts.push(alert("MISSING_PLANTING_YEAR", "WARNING", "plantingYear", "El año de siembra está vacío o no es válido."));
       if (lot && hasMultipleLots(lot)) alerts.push(alert("MULTIPLE_LOTS_IN_CELL", "WARNING", "lot", "La celda parece contener más de un lote y requiere revisión."));
       if (quantityRaw && quantity === null && normalizeKey(quantityRaw) !== "n/a") {
         alerts.push(alert("NON_NUMERIC_QUANTITY", "WARNING", "quantity", "La cantidad no pudo interpretarse como número."));
@@ -206,7 +206,7 @@ export function parseSheets(sheets: Sheet[]): Pick<ParsedMasterWorkbook, "sheets
 }
 
 // Prototipo WEB 1: recibe bytes de servidor, nunca una ruta local del usuario.
-// Las reglas parseSheets se conservan exactamente como en el escritorio.
+// Regla web adicional: lote y año de siembra obligatorios para incluir una fila.
 export async function parseMasterBytes(bytes: Uint8Array) {
   if (bytes.byteLength === 0) throw new Error("El maestro está vacío.");
   if (bytes.byteLength > 25 * 1024 * 1024) throw new Error("El archivo supera el límite de seguridad de 25 MB.");

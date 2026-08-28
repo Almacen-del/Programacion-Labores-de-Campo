@@ -54,6 +54,8 @@ export function createSyncStore(serviceKey, fetchImpl = fetch) {
     });
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
+      // Solo SQLSTATE: nunca detalles, payload, cabeceras ni credenciales.
+      if (/^[A-Z0-9]{5}$/.test(error.code??'')) console.error('MASTER_SYNC_SQLSTATE',error.code);
       throw new SyncError(CODES.has(error.message) ? error.message : 'DATABASE_FAILED');
     }
     return response.json();
@@ -139,7 +141,9 @@ export function createSyncHandler({ syncSecret, adminSecret, store, openDrive, p
       metrics.parseWallMs = Math.round(clock() - parseStart);
       const imported = new Set(parsed.sheets.filter(s => s.status === 'IMPORTED').map(s => normalize(s.name)));
       if (!['siembras nuevas', 'siembra de produccion', 'plateo mecanico'].every(name => imported.has(name))) throw new SyncError('STRUCTURE_CHANGED');
-      if (!parsed.records.length || !parsed.summary.valid) throw new SyncError('EMPTY_MASTER');
+      // Un maestro reconocido puede quedar sin filas elegibles. Debe vaciar la
+      // vista vigente, no conservar filas a las que se les quitaron las claves.
+      if (!Array.isArray(parsed.records) || parsed.summary.total !== parsed.records.length) throw new SyncError('EMPTY_MASTER');
       const payload = JSON.stringify({ sheets: parsed.sheets, records: parsed.records, summary: parsed.summary });
       metrics.snapshotJsonBytes = encoder.encode(payload).byteLength;
       if (metrics.snapshotJsonBytes > MAX_SNAPSHOT_BYTES) throw new SyncError('SNAPSHOT_TOO_LARGE');

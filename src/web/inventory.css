@@ -1,0 +1,2 @@
+.inventory-raw{white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;background:#f5f7ef;border:1px solid #dde4d7;border-radius:8px;padding:14px;font-size:12px}.inventory-confirm{margin-top:28px;border-top:1px solid #dce4d6;padding-top:20px}.inventory-confirm summary{cursor:pointer;color:#305e3f;font-weight:600}.inventory-confirm label{font-size:13px}.inventory-confirm .filters label:last-child{flex:3;max-width:none}.inventory-confirm input[type=checkbox]{margin-right:8px;accent-color:#24543a}
+.inventory-panel code{overflow-wrap:anywhere}

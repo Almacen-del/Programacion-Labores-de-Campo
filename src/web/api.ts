@@ -29,6 +29,7 @@ export async function rpc<T>(name:string,args:Record<string,unknown>={},signal?:
   if(signal)query=query.abortSignal(signal);
   const {data,error,status}=await query;
   if(error){
+    if(['VERSION_IMMUTABLE','EFFECTIVE_DATE_EXISTS'].includes(error.message))throw new ApiError(error.message);
     if(error.message==='SNAPSHOT_CHANGED')throw new ApiError('SNAPSHOT_CHANGED');
     if(status===401 || status===403 || error.code==='42501')throw new ApiError('ACCESS_DENIED');
     throw new ApiError(error.code==='22023'?'INVALID_FILTER':'UNAVAILABLE');
@@ -37,6 +38,8 @@ export async function rpc<T>(name:string,args:Record<string,unknown>={},signal?:
 }
 export function errorText(error:unknown):string{
   const code=error instanceof ApiError?error.code:'';
+  if(code==='VERSION_IMMUTABLE')return 'Esta versión ya está confirmada y no puede modificarse.';
+  if(code==='EFFECTIVE_DATE_EXISTS')return 'Ya hay otra versión confirmada para esa fecha. Revisa el historial antes de continuar.';
   if(code==='ACCESS_DENIED')return 'La cuenta no tiene acceso o su sesión venció. Vuelve a iniciar sesión con una cuenta autorizada.';
   if(code==='SNAPSHOT_CHANGED')return 'Llegó una nueva versión del maestro. Actualiza la consulta para continuar.';
   if(code==='INVALID_FILTER')return 'Revisa el rango de fechas y los filtros de la consulta.';
