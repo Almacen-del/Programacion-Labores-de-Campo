@@ -113,8 +113,10 @@ manifiesto: ya no depende de que el proyecto web sea una carpeta hermana.
    lectura de metadatos comprobada con la cuenta temporal. Ver `WEB_1_OAUTH.md`.
    No se reutilizaron credenciales del escritorio. Falta resolver el estado
    Prueba para uso sostenido y posteriormente el relevo al ingeniero.
-6. Ejecutar las mediciones alojadas y dos ciclos programados; la evidencia
-   local de WEB 1 se conserva, pero no reemplaza estas pruebas.
+6. Persistencia privada y Cron cada cinco minutos activos. Dos ciclos reales
+   con páginas cerradas verificados a las 13:55 y 14:00 UTC. Medidas y límites
+   en `WEB_1_SINCRONIZACION.md`; viabilidad favorable para el piloto en Free,
+   no garantía de operación permanente ni consumo mensual completo medido.
 
 No se inicia WEB 2, no se compran servicios y no se toca el programa de
 escritorio como consecuencia de esta actualización.

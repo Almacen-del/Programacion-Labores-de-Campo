@@ -2,7 +2,8 @@
 
 Fecha: 28 de agosto de 2026. Estado: OAuth web conectado con la cuenta de
 pruebas; token renovado y metadatos del maestro leídos desde Supabase.
-Esto no activa todavía la sincronización programada ni el login de la web.
+Este paso por sí solo no activa el login. La sincronización programada se
+implementó posteriormente: véase `WEB_1_SINCRONIZACION.md`.
 
 ## Resultado de la ejecución autorizada
 
@@ -83,8 +84,8 @@ para el relevo al ingeniero y confirmarse antes de modificar el acceso activo.
   documenta caducidad de siete días para el refresh token en ese estado.
   No se promete conexión indefinida ni se cambió a Producción.
 - El ingeniero todavía debe autorizar su propia conexión; no se usó su correo.
-- Faltan persistencia de datos del maestro, sincronización programada y sus
-  dos ejecuciones con página cerrada, medición integral y cierre de WEB 1.
+- Persistencia y sincronización programada implementadas posteriormente;
+  evidencia de los ciclos, medición y cierre técnico en `WEB_1_SINCRONIZACION.md`.
 - Login de aplicación, frontend y Gantt no se han implementado en este paso.
 
 Los apartados siguientes conservan la revisión y propuesta previa como contexto.

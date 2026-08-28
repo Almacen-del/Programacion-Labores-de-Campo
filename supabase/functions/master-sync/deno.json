@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "google-auth-library": "npm:google-auth-library@11.0.2",
+    "read-excel-file/node": "npm:read-excel-file@9.3.10/node"
+  }
+}

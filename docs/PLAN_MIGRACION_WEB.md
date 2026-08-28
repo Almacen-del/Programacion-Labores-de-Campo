@@ -76,6 +76,14 @@ Después de autorizar el inicio:
 Si no cabe, se detiene la migración completa y se propone una adaptación; no
 se activa un plan pago ni se convierte el maestro automáticamente.
 
+Resultado del piloto al 28 de agosto: OAuth y renovación verificados, carga
+real persistida con hash idéntico al escritorio y dos ciclos cada cinco minutos
+con páginas cerradas aprobados. Viabilidad técnica favorable con el maestro
+actual; véase `WEB_1_SINCRONIZACION.md`. El núcleo de sincronización se adelantó
+solo para demostrar WEB 1: no completa la interfaz y aceptación de WEB 3 ni
+autoriza iniciar WEB 2. Retención, consentimiento sostenido y relevo al usuario
+definitivo permanecen como condiciones de operación, sin cambios a planes pagos.
+
 Un cliente OAuth externo en estado Testing con permisos Drive puede emitir
 refresh tokens con vencimiento a siete días. Antes de operación continua se
 debe validar la configuración apropiada y cualquier requisito de Google. El

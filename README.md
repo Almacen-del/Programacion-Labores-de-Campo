@@ -74,13 +74,15 @@ sobrescribir uno existente. La verificación usa la ruta del manifiesto y
 sigue funcionando aunque se cambie de ubicación esta carpeta web.
 No ejecutar el respaldo de nuevo aquí.
 
-No hay interfaz funcional ni sincronización automática activa todavía.
+No hay interfaz funcional todavía. La sincronización automática del maestro
+ya está activa cada cinco minutos en Supabase; ver
+[configuración y evidencia](docs/WEB_1_SINCRONIZACION.md).
 La [prueba privada de servidor](docs/WEB_1_PRUEBA_PRIVADA.md) está desplegada
 en Supabase: rechazos de seguridad verificados y maestro procesado con el
-mismo resultado que el escritorio. Esto aún no constituye sincronización
-automática ni habilita el login de las cuentas de la aplicación.
+mismo resultado que el escritorio. Esa prueba aislada no habilita el login;
+la sincronización está implementada por separado en `master-sync`.
 
 OAuth de Drive conectado con `almacen@arlessas.com`: Supabase ya renovó el
 token y leyó los metadatos del maestro. La app Google sigue en Prueba; falta
 resolver la duración del consentimiento antes del uso continuo. Esto no es
-todavía el login de usuario ni la sincronización programada.
+todavía el login de usuario. El maestro y el escritorio permanecen intactos.

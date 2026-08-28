@@ -4,14 +4,18 @@ Fecha: 28 de agosto de 2026.
 
 Estado: preparación local, acceso a los paneles y prueba privada alojada
 verificados. OAuth web y renovación real del token también verificados;
-véase [resultado OAuth](WEB_1_OAUTH.md). WEB 1 NO se declara completada ni se
-inicia WEB 2: faltan persistencia del maestro y dos ejecuciones programadas,
-además de resolver el consentimiento sostenido fuera del estado Prueba.
+véase [resultado OAuth](WEB_1_OAUTH.md). La persistencia privada y el sondeo
+cada cinco minutos ya están activos. Dos ejecuciones con páginas cerradas,
+13:55 y 14:00 UTC, quedaron verificadas; véase [sincronización](WEB_1_SINCRONIZACION.md).
+La viabilidad técnica del piloto es favorable. No se inicia WEB 2 ni se declara
+operación definitiva: faltan consentimiento sostenido fuera del estado Prueba,
+retención/respaldo y participación del ingeniero.
 
 Actualización posterior del mismo día: el usuario reubicó el proyecto y
 proporcionó Supabase y Vercel. Véase [proyectos web](PROYECTOS_WEB.md) para
 los enlaces, los planes verificados y el alcance personal aclarado por el usuario.
-Las cifras que siguen corresponden a la prueba local ya realizada.
+Las cifras locales que siguen corresponden a la prueba inicial. El informe de
+sincronización contiene las medidas posteriores de persistencia y programación.
 
 ## Separación y protección
 
@@ -23,7 +27,8 @@ Las cifras que siguen corresponden a la prueba local ya realizada.
 - Se excluyeron las credenciales Google, tokens, perfil SQLite, dependencias,
   builds, `.git` y archivos de datos previos. No es un respaldo de la base operativa.
 - Copia de código, maestro descargado y evidencia detallada bajo `.private/`,
-  excluida por `.gitignore`. No se publicaron ni enviaron a Supabase.
+  excluida por `.gitignore`. No se publicaron en Git. Posteriormente se autorizó
+  procesar el maestro en Supabase y guardar su resultado en tablas privadas.
 - No se modificaron el maestro, sus permisos, el inventario ni el escritorio.
 - No se crearon proyectos externos, planes de pago ni facturación. OAuth web
   se creó posteriormente mediante autorización expresa, según `WEB_1_OAUTH.md`.
@@ -69,8 +74,8 @@ dominio en la respuesta. No se cambió su uso compartido.
 Se copió el lector y se sustituyó la entrada por ruta local por una entrada
 de bytes. Las reglas de hojas, filas, fechas, duplicados y alertas se
 conservaron. Usa `read-excel-file` 9.3.10, igual que el escritorio.
-Todavía usa compatibilidad Node; compilarlo localmente no demuestra que
-funcione en el runtime Edge de Supabase.
+Usa compatibilidad Node; compilarlo localmente no demostraba funcionamiento
+en Edge. Las pruebas alojadas posteriores sí verificaron ese funcionamiento.
 
 Resultados actuales (no los conteos históricos):
 
@@ -122,12 +127,15 @@ La sesión posterior permitió verificar organización Free, proyecto activo y
 
 Las [funciones alojadas](https://supabase.com/docs/guides/functions/limits)
 tienen 256 MB y 2 segundos de CPU por solicitud, con 150 segundos de duración
-en Free. El lector local ya consume más de un segundo de CPU: es un riesgo a
-medir en servidor, no evidencia suficiente de que cabe o de que no cabe.
+en Free. El consumo local no equivale a CPU de servidor. La prueba privada
+midió 388 ms de CPU del lector. La sincronización completa posterior midió
+689 ms de CPU y 15.118.624 bytes de memoria al cierre; los dos sondeos sin
+cambios midieron 126 ms de CPU cada uno. No confundir duración de reloj con
+CPU ni memoria al cierre con pico de memoria.
 
 Un sondeo cada cinco minutos son 8.640 ejecuciones en 30 días o 8.928 en 31,
-antes de reintentos y otras funciones. La futura sincronización debe consultar
-metadatos y no reimportar cuando el archivo siga igual.
+antes de reintentos y otras funciones. La sincronización implementada consulta
+metadatos y no reimporta cuando el archivo sigue igual.
 
 Como escenarios aritméticos, NO política de retención aprobada:
 
@@ -140,8 +148,10 @@ Como escenarios aritméticos, NO política de retención aprobada:
   deducir solo del tamaño del Excel; descargar Drive al servidor es entrada,
   no equivale por sí mismo a transferencia de salida de Supabase.
 
-El tamaño JSON NO equivale al almacenamiento PostgreSQL. Retención, tamaño
-real de tablas/índices y ancho de banda siguen pendientes de medición.
+El tamaño JSON NO equivale al almacenamiento PostgreSQL. Después de tres
+ciclos automáticos se midieron 942.080 bytes en el esquema de sincronización
+y 11.848.851 bytes en la base completa. Retención definitiva y consumo mensual
+de ancho de banda siguen pendientes.
 Free puede pausarse tras inactividad y no incluye respaldos automáticos.
 No se promete operación gratuita ininterrumpida.
 
@@ -149,9 +159,14 @@ La propuesta inicial de Cloudflare fue reemplazada por el proyecto Vercel
 proporcionado por el usuario. Hobby verificado; el usuario declara uso
 personal sin uso administrativo ni beneficio empresarial previsto.
 Existe un despliegue inicial, pero la dirección devuelve 404: no hay todavía
-una interfaz funcional. La prueba privada se prepara por separado.
+una interfaz funcional. La sincronización privada ya funciona por separado.
 
-## Reanudación: condiciones y orden
+## Orden de verificación inicial y pendientes
+
+Los puntos 2–4 y 6–7 ya se ejecutaron; la renovación de token del punto 5 y
+las medidas iniciales de almacenamiento del punto 8 también están verificadas.
+Siguen pendientes el acceso final, consentimiento sostenido, retención y
+consumo mensual completo. Se conserva el orden original como trazabilidad:
 
 1. Sesiones de servicios y dos identidades de aplicación confirmadas. Pendiente
    probar el acceso temporal y, con participación del ingeniero, el definitivo.

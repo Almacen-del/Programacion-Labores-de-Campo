@@ -7,7 +7,7 @@ maestro comprobados en Supabase Edge. WEB 1 completa sigue pendiente.
 ## Propósito
 
 Medir el lector en Supabase sobre la misma copia del maestro ya analizada.
-No es una pantalla de importación manual ni sustituye la futura sincronización
+No es una pantalla de importación manual ni sustituye la sincronización
 automática desde Drive. Es una herramienta temporal de ingeniería de WEB 1.
 
 Destino: proyecto `dziwhbjyvxdbplthpazt`, función
@@ -40,8 +40,10 @@ confirma la unidad de CPU y el alcance de la medida de memoria.
 
 El lector funcionó en esta prueba con el archivo actual y sin superar el
 límite de CPU de la solicitud. Esto no certifica todavía el sistema completo:
-faltan descarga Drive integrada al lector, persistencia del maestro,
-crecimiento de datos, pico de memoria, retención y dos ciclos programados.
+en ese momento faltaban descarga Drive integrada, persistencia y programación.
+Esas tres pruebas se completaron posteriormente en `master-sync`; véase
+[sincronización](WEB_1_SINCRONIZACION.md). Crecimiento de datos, pico de memoria
+y retención definitiva siguen pendientes.
 OAuth y renovación se verificaron posteriormente en una función separada;
 véase [resultado OAuth](WEB_1_OAUTH.md).
 
@@ -99,9 +101,9 @@ inicial se conserva para trazabilidad, no se cuenta como prueba aprobada.
    Pico de memoria pendiente. `parseWallMs`
    mide solo duración de análisis; NO es CPU. El endpoint declara
    `cpuMeasured: false` para no confundir medidas.
-7. Resultado documentado. OAuth web y renovación ya se verificaron por
-   separado; almacenamiento del maestro y dos ejecuciones programadas con
-   navegador cerrado siguen pendientes para completar WEB 1.
+7. Resultado documentado. OAuth web, renovación, almacenamiento del maestro
+   y dos ejecuciones programadas con páginas cerradas se verificaron después
+   en las funciones separadas; véanse `WEB_1_OAUTH.md` y `WEB_1_SINCRONIZACION.md`.
 
 Para esta prueba del lector se configuraron exclusivamente `WEB1_PROBE_SECRET` y
 `WEB1_EXPECTED_XLSX_SHA256`. La copia de la credencial en este equipo está en
@@ -121,5 +123,6 @@ El último comando solo envía la copia real después de comprobar los rechazos
 y su hash local. No ejecutar `prepare-probe-secret.mjs` de nuevo: se niega a
 sobrescribir la credencial ya creada. La función es una prueba privada, no
 un servicio completo de sincronización. OAuth web y renovación ya están
-verificados por separado. No hay todavía cron, login de las cuentas de la
-aplicación ni interfaz.
+verificados por separado. Cron y persistencia del maestro se implementaron
+posteriormente en `master-sync`; véase `WEB_1_SINCRONIZACION.md`.
+No hay todavía login de las cuentas de la aplicación ni interfaz.

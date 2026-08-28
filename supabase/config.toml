@@ -9,3 +9,7 @@ verify_jwt = false
 # /start y /verify: secreto de ingeniería. /launch y /callback: estado de un
 # solo uso, caducidad, PKCE y cookie segura. No es un login público.
 verify_jwt = false
+
+[functions.master-sync]
+# /run: secreto exclusivo del programador; /status y /schedule: administrador.
+verify_jwt = false
