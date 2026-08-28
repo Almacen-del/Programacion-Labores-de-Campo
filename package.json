@@ -11,6 +11,11 @@
     "benchmark": "npm run build:probe && node scripts/benchmark.mjs",
     "verify:desktop": "node scripts/snapshot-desktop.mjs --verify"
   },
-  "dependencies": { "read-excel-file": "9.3.10" },
-  "devDependencies": { "esbuild": "0.28.2" }
+  "dependencies": {
+    "google-auth-library": "11.0.2",
+    "read-excel-file": "9.3.10"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
 }

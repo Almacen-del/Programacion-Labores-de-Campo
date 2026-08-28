@@ -24,15 +24,23 @@ No es todavía la migración completa ni un sitio publicado.
 El proyecto original `Análisis de datos Arles SAS` se utiliza solo como fuente
 de referencia. No se modifica su código, SQLite ni credenciales de escritorio.
 Los datos privados de prueba y el respaldo de código se guardan en `.private/`,
-excluidos de Git. No se copian claves OAuth, tokens ni bases con credenciales.
+excluidos de Git. No se copian claves OAuth, tokens ni bases con credenciales
+del escritorio. Las credenciales nuevas de instalación web se resguardan
+en la carpeta privada y en secretos de servidor, nunca en el repositorio.
 
 El maestro de labores de Drive se mantiene en solo lectura. No se hacen
 públicos sus archivos ni se activan planes de pago.
 
 ## Documentación
 
+Acceso previsto: administrador temporal `almacen@arlessas.com` durante
+pruebas e ingeniero `dir.siembrasnuevas@arlessas.com` como usuario definitivo.
+No se han creado cuentas ni enviado invitaciones. El relevo está documentado
+en `docs/PROYECTOS_WEB.md`.
+
 - `docs/PLAN_MIGRACION_WEB.md`: copia del plan; autorizado iniciar únicamente WEB 1.
 - `docs/WEB_1_ESTADO.md`: evidencia y pendientes de la etapa.
+- `docs/WEB_1_OAUTH.md`: conexión Drive web verificada, seguridad y límites.
 
 ## Pruebas locales
 
@@ -67,5 +75,12 @@ sigue funcionando aunque se cambie de ubicación esta carpeta web.
 No ejecutar el respaldo de nuevo aquí.
 
 No hay interfaz funcional ni sincronización automática activa todavía.
-La [prueba privada de servidor](docs/WEB_1_PRUEBA_PRIVADA.md) está preparada
-localmente y cubierta por pruebas, pero no se ha desplegado ni medido en Edge.
+La [prueba privada de servidor](docs/WEB_1_PRUEBA_PRIVADA.md) está desplegada
+en Supabase: rechazos de seguridad verificados y maestro procesado con el
+mismo resultado que el escritorio. Esto aún no constituye sincronización
+automática ni habilita el login de las cuentas de la aplicación.
+
+OAuth de Drive conectado con `almacen@arlessas.com`: Supabase ya renovó el
+token y leyó los metadatos del maestro. La app Google sigue en Prueba; falta
+resolver la duración del consentimiento antes del uso continuo. Esto no es
+todavía el login de usuario ni la sincronización programada.

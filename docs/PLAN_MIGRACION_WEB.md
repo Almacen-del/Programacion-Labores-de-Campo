@@ -17,7 +17,9 @@ actualizada automáticamente, y el inventario general como maestro secundario.
 
 Alcance aclarado por el usuario: herramienta personal de una sola persona
 para automatizar su trabajo, sin uso administrativo ni beneficio empresarial
-previsto. No se habilitan otras cuentas ni se amplía ese uso por defecto.
+previsto. Durante desarrollo se aprueban dos cuentas: `almacen@arlessas.com`
+como administrador temporal de pruebas y `dir.siembrasnuevas@arlessas.com`
+como ingeniero y usuario definitivo. No se amplía el acceso a todo el dominio.
 
 - Vercel Hobby: plan verificado; frontend para el uso personal declarado.
 - Supabase Free: PostgreSQL, acceso privado, archivos privados y funciones.
@@ -26,7 +28,8 @@ previsto. No se habilitan otras cuentas ni se amplía ese uso por defecto.
 - Objetivo de infraestructura: $0 mensuales dentro de las cuotas gratuitas.
 - Sin dominio comprado, planes pagos ni activación de facturación automática.
 - Conservar el escritorio y su base local durante toda la migración.
-- Una sola identidad autorizada; no es un sistema multiempresa ni de roles complejos.
+- Dos identidades autorizadas durante pruebas y un usuario definitivo tras la
+  entrega; no es un sistema multiempresa ni de roles complejos.
 
 No se garantiza servicio ininterrumpido gratuito ni funcionamiento completo sin
 internet. Tampoco se convierte el archivo de Drive ni se amplían permisos sin
@@ -55,7 +58,7 @@ pendiente la aceptación real de la conexión; se verificará de nuevo.
 Después de autorizar el inicio:
 
 1. Respaldar y caracterizar el estado local, sin incluir secretos en reportes.
-2. Confirmar la identidad única autorizada y el acceso al maestro exacto.
+2. Confirmar las identidades de prueba y definitiva y el acceso al maestro exacto.
 3. Verificar recursos y cuotas disponibles en cuentas propiedad de Arles.
 4. Preparar un entorno mínimo privado de prueba. Proteger el acceso antes de
    cargar datos reales; no publicar una base abierta como paso temporal.
@@ -85,7 +88,9 @@ abrir los datos de la web al público. Véase [caducidad de Google OAuth](https:
 - Reutilizar diseño, navegación, contratos y reglas compatibles.
 - Sustituir las llamadas Electron por una API web validada.
 - Migraciones PostgreSQL para fuentes, versiones, filas, alertas y auditoría.
-- Acceso exclusivo del usuario aprobado, sin registro público.
+- Acceso exclusivo de las dos cuentas aprobadas durante pruebas, sin registro
+  público ni autorización general del dominio; retiro controlado de la temporal
+  al entregar, después de verificar el acceso definitivo.
 - Políticas de seguridad por fila (RLS) y almacenamiento privado: probar tanto
   el acceso permitido como el rechazo de un visitante y otra cuenta.
 - Credenciales Drive, refresh tokens y claves privilegiadas exclusivamente en
@@ -173,6 +178,11 @@ usuario. No se posterga el Gantt hasta terminar el módulo de inventario.
 ### WEB 7 — Aceptación y cambio de uso
 
 - Probar login autorizado y rechazo de acceso ajeno.
+- El ingeniero realizará su inicio de sesión real; no se sustituye por la cuenta
+  temporal ni se solicitan sus contraseñas. Su participación está pendiente.
+- Antes de retirar el acceso temporal, verificar el acceso definitivo y la
+  continuidad de la sincronización Drive sin depender del administrador de
+  pruebas. Confirmar la entrega antes de revocar permisos; no borrar datos.
 - Probar cambio del maestro con navegador cerrado, reintento sin duplicados,
   cambio de estructura, pérdida de acceso y renovación de sesión.
 - Probar filtros, Gantt, inventario histórico, reportes y restauración.
@@ -213,7 +223,7 @@ proveedor sin acuerdo del usuario.
 | Decisión | Antes de |
 |---|---|
 | Aprobar este plan y autorizar iniciar WEB 1 | Cualquier implementación o recurso externo |
-| Confirmar la cuenta única de acceso (propuesta: Almacen@arlessas.com) | WEB 1 |
+| Cuentas confirmadas: almacen@arlessas.com temporal y dir.siembrasnuevas@arlessas.com definitiva | WEB 1; pendiente implementación y prueba |
 | Resolver consentimiento OAuth para uso sostenido | Operación continua |
 | Aprobar planificación dentro de la web, estados y agrupación de días | Parte planificada de WEB 4 |
 | Elegir método futuro del inventario | WEB 5 |

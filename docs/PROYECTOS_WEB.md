@@ -24,9 +24,44 @@ WEB 1 aún no contiene una interfaz/index de la aplicación: Ready no significa
 que el Cuadro de Control esté funcionando.
 
 La cuenta de administración de los servicios no se toma automáticamente como
-la identidad única autorizada para la aplicación.
-No se han creado recursos ni modificado ajustes remotos durante esta revisión.
-No se ha hecho commit, push ni despliegue de los cambios locales.
+una identidad autorizada para la aplicación. Las dos cuentas aprobadas por
+el usuario se detallan a continuación.
+Actualización con autorización expresa: se desplegó únicamente `web1-probe`
+y se configuraron dos valores propios en los secretos de Supabase. La función
+valida su credencial dedicada y la copia exacta del Excel. Prueba real correcta;
+véase [evidencia del despliegue](WEB_1_PRUEBA_PRIVADA.md).
+No se hicieron commits, push, cambios de facturación ni despliegues Vercel
+por parte del asistente. Los commits locales creados por el usuario se preservan.
+
+## Acceso aprobado durante pruebas y entrega
+
+| Correo | Finalidad | Duración prevista |
+|---|---|---|
+| `almacen@arlessas.com` | Administrador temporal de pruebas | Desarrollo y aceptación |
+| `dir.siembrasnuevas@arlessas.com` | Ingeniero, usuario definitivo | Uso personal posterior a la entrega |
+
+El usuario no tiene acceso al correo del ingeniero todavía. Se pueden hacer
+las pruebas disponibles con la cuenta temporal; el inicio de sesión real del
+ingeniero debe realizarlo él y permanece pendiente. No se solicitarán sus
+contraseñas ni se simulará ese acceso como prueba aprobada.
+
+Solo estas dos identidades están aprobadas durante pruebas. No se permiten
+por ello todos los correos del dominio ni registro público. Los privilegios
+de la aplicación no implican permisos de propietario de Supabase, Vercel,
+GitHub, Google Cloud o Drive, ni acceso del navegador a secretos de servidor.
+
+El retiro del administrador temporal se preparará como parte de la entrega,
+después de verificar acceso y funcionamiento con el ingeniero y de confirmar
+el cierre con el usuario. No se revoca ni elimina ninguna cuenta ahora.
+La operación definitiva debe quedar sin depender de sesiones o credenciales
+personales del administrador temporal. Antes del retiro se comprobará quién
+mantendrá el consentimiento de Drive y la renovación de su acceso; autorizar
+la entrada a la web no otorga por sí mismo permisos sobre el maestro.
+
+Estado: cuentas registradas como decisión de diseño, no creadas ni habilitadas
+todavía. No se enviaron invitaciones ni se cambiaron permisos de usuarios.
+La prueba privada posterior se autorizó por separado y usa una credencial
+de ingeniería, no el login de estas cuentas.
 
 ## Condición de costo cero para Vercel
 
@@ -68,13 +103,16 @@ manifiesto: ya no depende de que el proyecto web sea una carpeta hermana.
 ## Pendientes para continuar WEB 1
 
 1. Sesiones y planes verificados en ambos paneles; no repetir el inicio de sesión.
-2. Confirmar la cuenta única de la aplicación (propuesta previa:
-   `Almacen@arlessas.com`; todavía no confirmada explícitamente).
-3. Prueba privada preparada localmente; ver [guía de la prueba](WEB_1_PRUEBA_PRIVADA.md).
-   Doce pruebas automatizadas aprobadas. El runtime Edge aún no se ha ejecutado.
+2. Cuentas confirmadas: administrador temporal e ingeniero según la tabla.
+   Falta implementar y probar su autenticación; la prueba real del ingeniero
+   requiere su participación cuando tenga disponibilidad.
+3. Prueba privada desplegada y ejecutada; ver [guía de la prueba](WEB_1_PRUEBA_PRIVADA.md).
+   Doce pruebas locales aprobadas; 401/401/422 y ejecución real 200 en Edge.
 4. Mantener el alcance personal declarado y el límite de costo cero.
-5. Desplegar la prueba privada y configurar OAuth web separado, con autorización
-   concreta antes de las modificaciones remotas que lo requieran.
+5. OAuth web separado creado con autorización concreta; token renovado y
+   lectura de metadatos comprobada con la cuenta temporal. Ver `WEB_1_OAUTH.md`.
+   No se reutilizaron credenciales del escritorio. Falta resolver el estado
+   Prueba para uso sostenido y posteriormente el relevo al ingeniero.
 6. Ejecutar las mediciones alojadas y dos ciclos programados; la evidencia
    local de WEB 1 se conserva, pero no reemplaza estas pruebas.
 

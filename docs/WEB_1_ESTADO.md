@@ -2,8 +2,11 @@
 
 Fecha: 28 de agosto de 2026.
 
-Estado: preparación local y acceso a los paneles verificados; pendiente prueba
-alojada. WEB 1 NO se declara completada ni se inicia WEB 2.
+Estado: preparación local, acceso a los paneles y prueba privada alojada
+verificados. OAuth web y renovación real del token también verificados;
+véase [resultado OAuth](WEB_1_OAUTH.md). WEB 1 NO se declara completada ni se
+inicia WEB 2: faltan persistencia del maestro y dos ejecuciones programadas,
+además de resolver el consentimiento sostenido fuera del estado Prueba.
 
 Actualización posterior del mismo día: el usuario reubicó el proyecto y
 proporcionó Supabase y Vercel. Véase [proyectos web](PROYECTOS_WEB.md) para
@@ -22,7 +25,17 @@ Las cifras que siguen corresponden a la prueba local ya realizada.
 - Copia de código, maestro descargado y evidencia detallada bajo `.private/`,
   excluida por `.gitignore`. No se publicaron ni enviaron a Supabase.
 - No se modificaron el maestro, sus permisos, el inventario ni el escritorio.
-- No se crearon proyectos externos, OAuth web, planes de pago ni facturación.
+- No se crearon proyectos externos, planes de pago ni facturación. OAuth web
+  se creó posteriormente mediante autorización expresa, según `WEB_1_OAUTH.md`.
+
+Posteriormente se autorizó y desplegó `web1-probe` en el proyecto Supabase
+aportado por el usuario. Se comprobó su protección antes de enviar la copia
+del Excel: 401 sin credencial, 401 con credencial incorrecta y 422 para otro
+archivo. La copia aprobada respondió 200 con hash de resultado idéntico al
+escritorio. Esa copia se procesó en memoria, sin guardarla en tablas/buckets.
+Los resultados y límites de la prueba se detallan en `WEB_1_PRUEBA_PRIVADA.md`.
+CPU de la ejecución real: 388 ms según el evento del servidor asociado al
+request ID; memoria al cierre 13.222.544 bytes, no pico de memoria.
 
 ## Fuente actual y cuenta
 
@@ -39,9 +52,15 @@ SHA-256 de la copia:
 `19fc850b66ab1a98fd48026b647269c07a47d62d819f7ce8d432ab0f0fa4ad4f`.
 
 La cuenta del conector Drive es `Almacen@arlessas.com` y tiene acceso.
-La sesión de Google del navegador está en `vivero@arlessas.com`; no se debe
-confundir ninguna sesión con la identidad única autorizada de la futura web.
-Hace falta confirmación del usuario de cuál será esa identidad.
+La sesión inicial de Google del navegador estaba en `vivero@arlessas.com`.
+Durante la revisión OAuth se accedió al panel del proyecto con
+`Almacen@arlessas.com`; esto no equivale al consentimiento de Drive ni a la
+autorización de entrada a la futura web. Véase [preparación OAuth](WEB_1_OAUTH.md).
+Posteriormente el usuario confirmó `almacen@arlessas.com` para administración
+temporal de pruebas y `dir.siembrasnuevas@arlessas.com` para el ingeniero como
+usuario definitivo. Su autenticación todavía no se ha implementado ni probado.
+El usuario no tiene acceso al correo del ingeniero; esa prueba real queda
+pendiente de su participación. Véase `PROYECTOS_WEB.md` para el relevo seguro.
 La consulta de permisos devolvió permisos de usuarios, sin `anyone` ni
 dominio en la respuesta. No se cambió su uso compartido.
 
@@ -134,8 +153,8 @@ una interfaz funcional. La prueba privada se prepara por separado.
 
 ## Reanudación: condiciones y orden
 
-1. Sesiones comprobadas. Usuario: confirmar la identidad única de acceso;
-   no se presume que sea la cuenta que administra Supabase o GitHub.
+1. Sesiones de servicios y dos identidades de aplicación confirmadas. Pendiente
+   probar el acceso temporal y, con participación del ingeniero, el definitivo.
 2. Inspeccionar los proyectos proporcionados de Supabase y Vercel, titularidad,
    plan y elegibilidad gratuita. Reutilizarlos sin crear duplicados. Presentar
    la configuración concreta antes de confirmar cambios externos.

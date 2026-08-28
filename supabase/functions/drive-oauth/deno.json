@@ -1,0 +1,3 @@
+{
+  "imports": { "google-auth-library": "npm:google-auth-library@11.0.2" }
+}

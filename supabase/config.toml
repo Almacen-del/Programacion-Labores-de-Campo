@@ -4,3 +4,8 @@ project_id = "programacion-labores-de-campo"
 # El handler valida una credencial exclusiva antes de leer bytes o ejecutar el parser.
 # No acepta anon keys ni tokens de sesión como sustitutos de esta credencial.
 verify_jwt = false
+
+[functions.drive-oauth]
+# /start y /verify: secreto de ingeniería. /launch y /callback: estado de un
+# solo uso, caducidad, PKCE y cookie segura. No es un login público.
+verify_jwt = false
