@@ -29,7 +29,7 @@ export async function rpc<T>(name:string,args:Record<string,unknown>={},signal?:
   if(signal)query=query.abortSignal(signal);
   const {data,error,status}=await query;
   if(error){
-    if(['VERSION_IMMUTABLE','EFFECTIVE_DATE_EXISTS'].includes(error.message))throw new ApiError(error.message);
+    if(['VERSION_IMMUTABLE','EFFECTIVE_DATE_EXISTS','EXPORT_LIMIT','BACKUP_LIMIT'].includes(error.message))throw new ApiError(error.message);
     if(error.message==='SNAPSHOT_CHANGED')throw new ApiError('SNAPSHOT_CHANGED');
     if(status===401 || status===403 || error.code==='42501')throw new ApiError('ACCESS_DENIED');
     throw new ApiError(error.code==='22023'?'INVALID_FILTER':'UNAVAILABLE');
@@ -38,6 +38,8 @@ export async function rpc<T>(name:string,args:Record<string,unknown>={},signal?:
 }
 export function errorText(error:unknown):string{
   const code=error instanceof ApiError?error.code:'';
+  if(code==='EXPORT_LIMIT')return 'El reporte supera 20.000 registros. Reduce el periodo o los filtros; no se descargó un archivo parcial.';
+  if(code==='BACKUP_LIMIT')return 'El respaldo supera el límite de descarga. Se necesita una copia técnica por partes; no se eliminó ni truncó información.';
   if(code==='VERSION_IMMUTABLE')return 'Esta versión ya está confirmada y no puede modificarse.';
   if(code==='EFFECTIVE_DATE_EXISTS')return 'Ya hay otra versión confirmada para esa fecha. Revisa el historial antes de continuar.';
   if(code==='ACCESS_DENIED')return 'La cuenta no tiene acceso o su sesión venció. Vuelve a iniciar sesión con una cuenta autorizada.';

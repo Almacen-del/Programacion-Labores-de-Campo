@@ -11,6 +11,8 @@ WEB 4 autorizada: Gantt de ejecución, lotes e indicadores; planificación edita
 y aceptación visual siguen sujetos a aprobación. Véase [WEB 4](WEB_4_ESTADO.md).
 WEB 5 autorizada: inventario secundario con vista previa, confirmación y versiones.
 Fecha efectiva y método de actualización pendientes: [WEB 5](WEB_5_ESTADO.md).
+WEB 6 autorizada: reportes CSV, respaldo descargable y capacidad implementados;
+retención, destino/frecuencia de copias y presupuesto total pendientes: [WEB 6](WEB_6_ESTADO.md).
 Actualización: el usuario aporta proyectos existentes en Supabase y Vercel;
 este último sustituye la propuesta inicial de frontend en Cloudflare,
 sujeto a verificar plan y elegibilidad. Véase [proyectos web](PROYECTOS_WEB.md).

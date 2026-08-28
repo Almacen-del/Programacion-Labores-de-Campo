@@ -12,6 +12,7 @@ Ubicación actual: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web\Program
 Aplicación: [abrir web](https://programacion-labores-de-campo.vercel.app).
 Acceso privado con Google; registros, alertas y estado del maestro de solo lectura.
 Regla vigente: [solo filas con lote y año de siembra](docs/REGLA_LOTE_ANO.md).
+Nuevo: [WEB 6 — reportes, respaldo y capacidad](docs/WEB_6_ESTADO.md).
 Ver [WEB 5: inventario en revisión](docs/WEB_5_ESTADO.md),
 [WEB 4: Gantt de ejecución](docs/WEB_4_ESTADO.md) y
 [WEB 3: prueba operativa pendiente](docs/WEB_3_ESTADO.md).
