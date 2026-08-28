@@ -1,8 +1,12 @@
 # WEB 6 — Reportes, respaldo y capacidad
 
-28 de agosto de 2026. Inicio autorizado. Bloque funcional implementado; etapa
-no cerrada hasta acordar custodia, frecuencia y retención y validar consumo
-total en los proveedores. Sin planes pagos, purgas ni cambios de OAuth.
+28 de agosto de 2026. Inicio autorizado. Bloque funcional implementado.
+Respaldo manual elegido expresamente por el usuario: cada copia se genera con
+«Descargar respaldo JSON». El usuario decide cuándo descargarla y dónde guardarla;
+no se programan copias ni se habilita escritura adicional en Drive.
+Queda pendiente validar consumo total y retención del historial en la base.
+Sin planes pagos, purgas ni cambios de OAuth. La sincronización del maestro
+continúa cada cinco minutos, independientemente de los respaldos manuales.
 
 ## Disponible
 
@@ -77,13 +81,15 @@ Respaldo real descargado en Descargas:
 `arles-respaldo-2026-08-28T16-22-26.261Z.json` (10.832.899 bytes).
 Verificación y recuperación aislada correctas: 2 snapshots, 5.975 registros
 vigentes, 32 alertas y 1 versión de inventario; sin credenciales y sin modificar
-producción. Esta copia local no sustituye la futura custodia externa acordada.
+producción. Cada respaldo manual queda bajo custodia del usuario; se recomienda
+conservar otra copia privada fuera de este equipo.
 
 ## Decisiones pendientes
 
-- Destino externo y custodio del respaldo; frecuencia y aviso de fallo.
+- Respaldo decidido: manual, sin frecuencia automática ni avisos programados.
+  El usuario conserva los archivos descargados en una ubicación privada elegida.
 - Retención de historial y logs. Propuesta inicial: mantener sin borrado hasta
   aprobar política; generar copia antes de cada cambio relevante. No se ha
   activado ningún trabajo automático nuevo.
 - Consumo mensual total real de Supabase/Vercel y formatos finales de reportes.
-- Validación del usuario. WEB 7 no iniciada.
+- Validación del usuario: WEB 7 iniciada posteriormente, véase [aceptación](WEB_7_ESTADO.md).
