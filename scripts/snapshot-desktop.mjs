@@ -4,9 +4,17 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const source = path.resolve(root, '..', 'Análisis de datos Arles SAS');
 const destination = path.join(root, '.private', 'desktop-baseline');
 const manifestPath = path.join(root, '.private', 'desktop-baseline.json');
+const verify = process.argv.includes('--verify');
+const savedManifest = verify ? JSON.parse(await fs.readFile(manifestPath, 'utf8')) : null;
+const sourceFlag = process.argv.indexOf('--source');
+const sourcePath = verify ? savedManifest.source : sourceFlag >= 0 ? process.argv[sourceFlag + 1] : null;
+if (typeof sourcePath !== 'string' || !path.isAbsolute(sourcePath)) {
+  throw new Error('Indique la ruta absoluta del escritorio con --source. La verificación usa la ruta guardada en el manifiesto.');
+}
+const source = await fs.realpath(sourcePath);
+if (source === await fs.realpath(root)) throw new Error('El origen debe ser el proyecto de escritorio, no este proyecto web.');
 const entries = ['apps/desktop/src', 'packages', 'docs', 'scripts', 'package.json', 'package-lock.json', 'README.md', 'tsconfig.json', 'vite.config.ts', 'vitest.config.ts', '.gitignore', 'config/google-oauth.example.json'];
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 
@@ -19,8 +27,8 @@ async function* files(relative) {
   } else if (stat.isFile()) yield relative;
 }
 
-if (process.argv.includes('--verify')) {
-  const manifest = JSON.parse(await fs.readFile(manifestPath, 'utf8'));
+if (verify) {
+  const manifest = savedManifest;
   const changes = [];
   for (const entry of manifest.files) {
     try {

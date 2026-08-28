@@ -2,9 +2,11 @@
 
 Fecha: 28 de agosto de 2026.
 
-Estado: propuesta para validación. Este documento no inicia la migración,
-crea recursos externos ni autoriza cobros. Las etapas WEB son independientes
-de los bloques históricos de escritorio.
+Estado: autorizado iniciar únicamente WEB 1. Las etapas WEB son independientes
+de los bloques históricos de escritorio. No se autorizan cobros.
+Actualización: el usuario aporta proyectos existentes en Supabase y Vercel;
+este último sustituye la propuesta inicial de frontend en Cloudflare,
+sujeto a verificar plan y elegibilidad. Véase [proyectos web](PROYECTOS_WEB.md).
 
 ## 1. Objetivo y límites
 
@@ -13,7 +15,11 @@ Control y con el Gantt por lote y labor como función distintiva. Mantener el
 maestro de programación de labores en Google Drive como fuente principal,
 actualizada automáticamente, y el inventario general como maestro secundario.
 
-- Cloudflare Pages Free: interfaz React.
+Alcance aclarado por el usuario: herramienta personal de una sola persona
+para automatizar su trabajo, sin uso administrativo ni beneficio empresarial
+previsto. No se habilitan otras cuentas ni se amplía ese uso por defecto.
+
+- Vercel Hobby: plan verificado; frontend para el uso personal declarado.
 - Supabase Free: PostgreSQL, acceso privado, archivos privados y funciones.
 - Supabase Cron: revisión periódica del maestro, aunque el navegador esté cerrado.
 - Google Drive: lectura del archivo autorizado, sin modificarlo ni hacerlo público.
@@ -195,9 +201,12 @@ días, antes de reintentos, procesamiento dividido, navegación y otras tareas.
 Esto no demuestra por sí solo que la aplicación quepa en las cuotas.
 La programación se apoya en [Cron y Edge Functions](https://supabase.com/docs/guides/functions/schedule-functions).
 
-Cloudflare Pages Free admite 500 compilaciones por mes. Se utilizará para
-archivos de interfaz, nunca para publicar maestros o credenciales. Véanse
-[límites de Pages](https://developers.cloudflare.com/pages/platform/limits/).
+El frontend se ha actualizado a Vercel por indicación del usuario. Su plan
+[Hobby](https://vercel.com/docs/plans/hobby) restringe el uso a proyectos
+personales no comerciales. El usuario ha aclarado ese alcance personal y se
+continúa sobre esa base; no equivale a una certificación de Vercel.
+Si cambia el uso, revisar las condiciones. No cambiar a pago ni a otro
+proveedor sin acuerdo del usuario.
 
 ## 5. Decisiones del usuario en su momento
 

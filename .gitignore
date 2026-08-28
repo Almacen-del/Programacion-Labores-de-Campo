@@ -8,3 +8,10 @@ coverage/
 *.log
 *.sqlite*
 supabase/.temp/
+.vercel/
+config/google-oauth.json
+client_secret*.json
+*.pem
+*.p12
+*.xlsx
+*.xls

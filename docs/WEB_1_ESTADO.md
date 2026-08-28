@@ -2,12 +2,17 @@
 
 Fecha: 28 de agosto de 2026.
 
-Estado: preparación local verificada; pendiente acceso a Supabase y prueba
+Estado: preparación local y acceso a los paneles verificados; pendiente prueba
 alojada. WEB 1 NO se declara completada ni se inicia WEB 2.
+
+Actualización posterior del mismo día: el usuario reubicó el proyecto y
+proporcionó Supabase y Vercel. Véase [proyectos web](PROYECTOS_WEB.md) para
+los enlaces, los planes verificados y el alcance personal aclarado por el usuario.
+Las cifras que siguen corresponden a la prueba local ya realizada.
 
 ## Separación y protección
 
-- Carpeta independiente: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web`.
+- Carpeta actual: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web\Programacion Labores de Campo`.
 - Original de escritorio: `C:\Users\Almacen\Documents\ChatGPT\Análisis de datos Arles SAS`.
 - Respaldo de 57 archivos de código, configuración de ejemplo y documentación:
   436.652 bytes, verificados mediante SHA-256.
@@ -93,8 +98,8 @@ por npm en ese momento; no representa garantía de seguridad futura.
 
 [Supabase Free](https://supabase.com/pricing) publica 500 MB de base,
 1 GB de archivos, 5 GB de salida y 500.000 invocaciones de funciones al mes.
-El cupo real de la organización no se ha verificado: el panel exige iniciar
-sesión. No se presupone que queden proyectos gratuitos disponibles.
+La sesión posterior permitió verificar organización Free, proyecto activo y
+26 MB / 500 MB de base usados; detalles en `PROYECTOS_WEB.md`.
 
 Las [funciones alojadas](https://supabase.com/docs/guides/functions/limits)
 tienen 256 MB y 2 segundos de CPU por solicitud, con 150 segundos de duración
@@ -121,16 +126,19 @@ real de tablas/índices y ancho de banda siguen pendientes de medición.
 Free puede pausarse tras inactividad y no incluye respaldos automáticos.
 No se promete operación gratuita ininterrumpida.
 
-[Cloudflare Pages Free](https://developers.cloudflare.com/pages/platform/limits/)
-publica 500 builds mensuales. Su cuenta y cupo no se han verificado; no se
-ha desplegado frontend. Esto corresponde a una etapa posterior a la prueba.
+La propuesta inicial de Cloudflare fue reemplazada por el proyecto Vercel
+proporcionado por el usuario. Hobby verificado; el usuario declara uso
+personal sin uso administrativo ni beneficio empresarial previsto.
+Existe un despliegue inicial, pero la dirección devuelve 404: no hay todavía
+una interfaz funcional. La prueba privada se prepara por separado.
 
 ## Reanudación: condiciones y orden
 
-1. Usuario: iniciar sesión en Supabase y confirmar la identidad única de
-   acceso propuesta, `Almacen@arlessas.com`, o indicar la correcta.
-2. Inspeccionar organización, titularidad y disponibilidad de Free. Presentar
-   proyecto y configuración concretos antes de confirmar su creación.
+1. Sesiones comprobadas. Usuario: confirmar la identidad única de acceso;
+   no se presume que sea la cuenta que administra Supabase o GitHub.
+2. Inspeccionar los proyectos proporcionados de Supabase y Vercel, titularidad,
+   plan y elegibilidad gratuita. Reutilizarlos sin crear duplicados. Presentar
+   la configuración concreta antes de confirmar cambios externos.
 3. Crear un entorno privado mínimo, con rechazo de solicitudes no autorizadas
    probado antes de cargar datos reales. Sin frontend público con datos.
 4. Preparar OAuth WEB separado del escritorio, Drive con alcance mínimo y

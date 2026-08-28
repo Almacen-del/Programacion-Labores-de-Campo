@@ -1,7 +1,8 @@
 import { createHash } from "node:crypto";
-import { Buffer } from "node:buffer";
+import fs from "node:fs/promises";
+import path from "node:path";
 import readXlsxFile, { type CellValue, type Sheet } from "read-excel-file/node";
-import type { ParsedAlert, ParsedLaborRecord, ParsedMasterWorkbook, ParsedSheet } from "./types.ts";
+import type { ParsedAlert, ParsedLaborRecord, ParsedMasterWorkbook, ParsedSheet } from "./types";
 
 const EXPECTED_SHEETS = new Set([
   "siembras nuevas",
@@ -205,20 +206,27 @@ export function parseSheets(sheets: Sheet[]): Pick<ParsedMasterWorkbook, "sheets
   return { sheets: parsedSheets, records, summary };
 }
 
-// Prototipo WEB 1: recibe bytes de servidor, nunca una ruta local del usuario.
-// Las reglas parseSheets se conservan exactamente como en el escritorio.
-export async function parseMasterBytes(bytes: Uint8Array) {
-  if (bytes.byteLength === 0) throw new Error("El maestro está vacío.");
-  if (bytes.byteLength > 25 * 1024 * 1024) throw new Error("El archivo supera el límite de seguridad de 25 MB.");
+export async function parseMasterWorkbook(filePath: string): Promise<ParsedMasterWorkbook> {
+  const absolutePath = path.resolve(filePath);
+  const extension = path.extname(absolutePath).toLocaleLowerCase();
+  if (extension !== ".xlsx") throw new Error("El maestro debe ser un archivo .xlsx.");
+  const stats = await fs.stat(absolutePath);
+  if (!stats.isFile()) throw new Error("La ruta seleccionada no corresponde a un archivo.");
+  if (stats.size > 25 * 1024 * 1024) throw new Error("El archivo supera el límite de seguridad de 25 MB.");
+
+  const bytes = await fs.readFile(absolutePath);
   const fileHash = createHash("sha256").update(bytes).digest("hex");
-  const sheets = await readXlsxFile(Buffer.from(bytes), { trim: false });
+  const sheets = await readXlsxFile(bytes, { trim: false });
   const parsed = parseSheets(sheets);
   if (!parsed.sheets.some((sheet) => sheet.status === "IMPORTED")) {
     throw new Error("El archivo no contiene ninguno de los tres perfiles aprobados del maestro MA-F-009.");
   }
 
   return {
-    fileSize: bytes.byteLength,
+    filePath: absolutePath,
+    fileName: path.basename(absolutePath),
+    fileSize: stats.size,
+    fileModifiedAt: stats.mtime.toISOString(),
     fileHash,
     parsedAt: new Date().toISOString(),
     ...parsed,

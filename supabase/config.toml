@@ -1,0 +1,6 @@
+project_id = "programacion-labores-de-campo"
+
+[functions.web1-probe]
+# El handler valida una credencial exclusiva antes de leer bytes o ejecutar el parser.
+# No acepta anon keys ni tokens de sesión como sustitutos de esta credencial.
+verify_jwt = false

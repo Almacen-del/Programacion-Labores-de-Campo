@@ -1,0 +1,5 @@
+{
+  "imports": {
+    "read-excel-file/node": "npm:read-excel-file@9.3.10/node"
+  }
+}
