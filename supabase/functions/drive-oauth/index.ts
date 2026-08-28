@@ -1,5 +1,6 @@
 import { OAuth2Client, CodeChallengeMethod } from 'google-auth-library';
 import { createDriveOAuthHandler, createRpcStore, CALLBACK_URL, MASTER_ID, TEST_EMAIL, DRIVE_SCOPE } from '../_shared/drive-oauth.mjs';
+import { createReconnectAuthorizer, withReconnectCors } from '../_shared/web3-reconnect.mjs';
 
 const clientId = Deno.env.get('GOOGLE_WEB_CLIENT_ID');
 const clientSecret = Deno.env.get('GOOGLE_WEB_CLIENT_SECRET');
@@ -40,9 +41,10 @@ const google = {
   metadata: (token: string) => driveRead(`files/${MASTER_ID}?fields=id,name,mimeType,modifiedTime,size,trashed&supportsAllDrives=true`, token),
 };
 
-Deno.serve(createDriveOAuthHandler({ clientId, clientSecret,
+Deno.serve(withReconnectCors(createDriveOAuthHandler({ clientId, clientSecret,
   encryptionKey: Deno.env.get('DRIVE_OAUTH_ENCRYPTION_KEY'),
   adminSecret: Deno.env.get('DRIVE_OAUTH_ADMIN_SECRET'),
   store: createRpcStore(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')),
+  authorizeReconnect: createReconnectAuthorizer(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')),
   google,
-}));
+})));

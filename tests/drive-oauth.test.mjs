@@ -4,7 +4,7 @@ import { createDriveOAuthHandler, createCipher, createRpcStore, digest, randomHe
   BASE_URL, MASTER_ID, TEST_EMAIL, DRIVE_SCOPE } from '../supabase/functions/_shared/drive-oauth.mjs';
 
 const clientId = '433631251791-test.apps.googleusercontent.com';
-function setup(overrides = {}) {
+function setup(overrides = {}, authorizeReconnect=async()=>null) {
   const states = new Map();
   const context = { record: null, calls: [], refreshes: 0 };
   const adminSecret = 'a'.repeat(64), encryptionKey = 'b'.repeat(64);
@@ -18,8 +18,8 @@ function setup(overrides = {}) {
   };
   const store = async (op, p) => {
     context.calls.push(op);
-    if (op === 'begin') {
-      if (context.record) return false;
+    if (op === 'begin' || op==='begin_renew') {
+      if (context.record && op==='begin') return false;
       states.set(p.p_state_hash, { ...p }); return true;
     }
     if (op === 'launch') {
@@ -32,14 +32,15 @@ function setup(overrides = {}) {
       if (!row || row.p_binding_hash !== p.p_binding_hash || row.expired) return null;
       states.delete(p.p_state_hash); return row.p_payload;
     }
-    if (op === 'connect') {
-      if (context.record) return false;
+    if (op === 'connect' || op==='connect_renew') {
+      if (op==='connect' && context.record) return false;
+      if (op==='connect_renew' && (context.record?.token_cipher??null)!==p.p_expected_cipher)return false;
       context.record = { token_cipher: p.p_token_cipher }; return true;
     }
     if (op === 'read') return context.record;
     if (op === 'checked') return '2026-08-28T13:00:00Z';
   };
-  const handler = createDriveOAuthHandler({ clientId, clientSecret: 'test-secret', encryptionKey, adminSecret, store, google });
+  const handler = createDriveOAuthHandler({ clientId, clientSecret: 'test-secret', encryptionKey, adminSecret, store, google, authorizeReconnect });
   const request = (path, options = {}) => handler(new Request(`${BASE_URL}${path}`, options));
   const admin = path => request(path, { method: 'POST', headers: { Authorization: `Bearer ${adminSecret}` } });
   async function launch() {
@@ -158,4 +159,22 @@ test('OAuth: nonces aleatorios de 256 bits y huellas SHA-256', async () => {
   const a = randomHex(), b = randomHex();
   assert.match(a, /^[a-f0-9]{64}$/); assert.notEqual(a, b);
   assert.match(await digest(a), /^[a-f0-9]{64}$/);
+});
+
+test('WEB3 reconexión deniega visitante incluso con secreto administrativo',async()=>{
+  const s=setup();assert.equal((await s.admin('/reconnect')).status,401);assert.deepEqual(s.context.calls,[]);
+});
+test('WEB3 reconexión conserva token al cancelar o fallar renovación y evita replay',async()=>{
+  for(const outcome of ['cancel','fail','ok']){
+    const s=setup(outcome==='fail'?{refresh:async()=>{throw new Error('revoked')}}:{},async()=>({uid:'test-user'}));
+    s.context.record={token_cipher:'ORIGINAL'};
+    const start=await s.request('/reconnect',{method:'POST'});assert.equal(start.status,200);
+    assert.equal(s.context.record.token_cipher,'ORIGINAL');
+    const launch=await s.handler(new Request((await start.json()).launchUrl));
+    const flow={state:new URL(launch.headers.get('location')).searchParams.get('state'),cookie:launch.headers.get('set-cookie').split(';')[0]};
+    const result=await s.callback(flow,outcome==='cancel'?'&error=access_denied':'');
+    assert.equal(result.status,outcome==='ok'?200:outcome==='fail'?502:400);
+    if(outcome==='ok')assert.notEqual(s.context.record.token_cipher,'ORIGINAL');else assert.equal(s.context.record.token_cipher,'ORIGINAL');
+    assert.equal((await s.callback(flow)).status,400);
+  }
 });

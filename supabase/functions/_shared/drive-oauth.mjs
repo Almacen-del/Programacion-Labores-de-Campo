@@ -64,7 +64,7 @@ export async function createCipher(keyHex, clientId) {
 export function createRpcStore(serviceKey, fetchImpl = fetch) {
   if (!serviceKey) throw new Error('missing_service_key');
   return async (operation, args = {}) => {
-    if (!['begin', 'launch', 'consume', 'connect', 'read', 'checked'].includes(operation)) throw new Error('invalid_rpc');
+    if (!['begin', 'launch', 'consume', 'connect', 'read', 'checked','begin_renew','connect_renew'].includes(operation)) throw new Error('invalid_rpc');
     const response = await fetchImpl(`${PROJECT_URL}/rest/v1/rpc/web1_drive_oauth_${operation}`, {
       method: 'POST', headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(args), redirect: 'error', signal: AbortSignal.timeout(15000),
@@ -74,7 +74,7 @@ export function createRpcStore(serviceKey, fetchImpl = fetch) {
   };
 }
 
-export function createDriveOAuthHandler({ clientId, clientSecret, encryptionKey, adminSecret, store, google }) {
+export function createDriveOAuthHandler({ clientId, clientSecret, encryptionKey, adminSecret, store, google, authorizeReconnect=async()=>null }) {
   let cipherPromise;
   async function authenticated(request) {
     const supplied = request.headers.get('authorization');
@@ -100,18 +100,22 @@ export function createDriveOAuthHandler({ clientId, clientSecret, encryptionKey,
     const callback = route === '/drive-oauth/callback';
     try {
       if (request.url.length > 12000) return message('Solicitud inválida.', 400);
-      if (route === '/drive-oauth/start' || route === '/drive-oauth/verify') {
+      if (route === '/drive-oauth/start' || route === '/drive-oauth/verify' || route === '/drive-oauth/reconnect') {
         if (request.method !== 'POST') return json({ error: 'method_not_allowed' }, 405);
-        if (!await authenticated(request)) return json({ error: 'unauthorized' }, 401);
+        const reconnect=route.endsWith('/reconnect');
+        const actor=reconnect?await authorizeReconnect(request):null;
+        if (reconnect?!actor:!await authenticated(request)) return json({ error: 'unauthorized' }, 401);
         if (url.search || !await emptyBody(request)) return json({ error: 'body_not_allowed' }, 400);
         const cipher = await checkConfig();
-        if (route.endsWith('/start')) {
+        if (route.endsWith('/start') || reconnect) {
           const state = randomHex(), ticket = randomHex(), verifier = randomHex();
-          const payload = await cipher.seal({ state, verifier, email: TEST_EMAIL }, 'state');
-          const created = await store('begin', {
+          const current=reconnect?await store('read'):null;
+          const payload = await cipher.seal({ state, verifier, email: TEST_EMAIL,
+            ...(reconnect?{renew:true,expectedCipher:current?.token_cipher??null,actor:actor.uid}:{}) }, 'state');
+          const created = await store(reconnect?'begin_renew':'begin', {
             p_state_hash: await digest(state), p_launch_hash: await digest(ticket), p_payload: payload,
           });
-          if (!created) return json({ error: 'already_connected' }, 409);
+          if (!created) return json({ error: reconnect?'retry_later':'already_connected' }, 409);
           return json({ launchUrl: `${BASE_URL}/launch?ticket=${ticket}`, expiresIn: 600 });
         }
         const record = await store('read');
@@ -161,7 +165,15 @@ export function createDriveOAuthHandler({ clientId, clientSecret, encryptionKey,
         await validateAccess(tokens.access_token);
         const tokenCipher = await cipher.seal({ refreshToken: tokens.refresh_token, email: TEST_EMAIL,
           masterId: MASTER_ID, clientId, scope: DRIVE_SCOPE }, 'refresh');
-        if (!await store('connect', { p_token_cipher: tokenCipher })) return message('Ya hay una conexión guardada. No se reemplazó.', 409, true);
+        // Antes de sustituir, comprobar que el nuevo refresh token funciona.
+        if(stateData.renew){
+          const renewed=await google.refresh(tokens.refresh_token);
+          if(!renewed.access_token || (renewed.scope&&renewed.scope!==DRIVE_SCOPE))throw new Error('invalid_refresh');
+          await validateAccess(renewed.access_token);
+        }
+        if (!await store(stateData.renew?'connect_renew':'connect', { p_token_cipher: tokenCipher,
+          ...(stateData.renew?{p_expected_cipher:stateData.expectedCipher,p_actor:stateData.actor}:{}) })) return message('La conexión cambió o el acceso ya no está autorizado. No se reemplazó.', 409, true);
+        if(stateData.renew)return message('Conexión renovada y comprobada. Regresa a la aplicación; el siguiente ciclo automático revisará el maestro.',200,true);
         return message('Conexión a Drive guardada de forma segura. Puedes cerrar esta pestaña. Falta comprobar la renovación desde el servidor.', 200, true);
       }
       return message('Ruta no disponible.', 404);

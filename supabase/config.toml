@@ -28,6 +28,7 @@ verify_jwt = false
 [functions.drive-oauth]
 # /start y /verify: secreto de ingeniería. /launch y /callback: estado de un
 # solo uso, caducidad, PKCE y cookie segura. No es un login público.
+# /reconnect: JWT verificado contra RPC de membresía, titular temporal y CORS exacto.
 verify_jwt = false
 
 [functions.master-sync]

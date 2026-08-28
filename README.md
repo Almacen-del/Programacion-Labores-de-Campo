@@ -9,9 +9,9 @@ Ubicación actual: `C:\Users\Almacen\Documents\ChatGPT\Arles Control Web\Program
 - [Supabase](https://supabase.com/dashboard/project/dziwhbjyvxdbplthpazt): proyecto seleccionado para base de datos y sincronización.
 - [Vercel](https://vercel.com/almacen-2787s-projects/programacion-labores-de-campo): frontend en Hobby para el uso personal declarado; sustituye la propuesta inicial de Cloudflare.
 
-WEB 2 publicada: [abrir aplicación](https://programacion-labores-de-campo.vercel.app).
+Aplicación: [abrir web](https://programacion-labores-de-campo.vercel.app).
 Acceso privado con Google; registros, alertas y estado del maestro de solo lectura.
-Ver [entrega y pendientes actuales](docs/WEB_2_ESTADO.md).
+Ver [WEB 3 y prueba operativa pendiente](docs/WEB_3_ESTADO.md).
 
 ## Alcance actual
 

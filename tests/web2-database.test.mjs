@@ -20,7 +20,7 @@ async function identity(id){
 }
 before(async()=>{
   db=new PGlite();
-  await db.exec(`create role anon; create role authenticated; create role supabase_auth_admin;
+  await db.exec(`create role anon; create role authenticated; create role supabase_auth_admin; create role service_role;
     create schema auth; grant usage on schema auth to authenticated;
     create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,banned_until timestamptz);
@@ -36,8 +36,42 @@ before(async()=>{
   await db.query('insert into arles_sync_private.snapshots(snapshot_hash,payload,summary) values($1,$2,$3)',[hash,JSON.stringify(payload),JSON.stringify(payload.summary)]);
   await db.query('insert into arles_sync_private.control values(true,$1,now(),now(),null,$2)',[hash,JSON.stringify({version:'1',modifiedTime:'2026-08-01T00:00:00Z'})]);
   await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828153000_web2_private_app.sql',import.meta.url),'utf8'));
+  await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828132000_web1_drive_oauth.sql',import.meta.url),'utf8'));
+  await db.exec('alter table arles_sync_private.control add column lease_until timestamptz');
+  await db.exec(await fs.readFile(new URL('../supabase/migrations/20260828170000_web3_sync.sql',import.meta.url),'utf8'));
 });
 after(async()=>{await db?.close()});
+
+test('WEB3 RPC privada y reconexión restringida al titular temporal',async()=>{
+  await identity(null);await assert.rejects(db.query('select public.web3_sync_info()'),/permission denied/);
+  await identity(stranger);await assert.rejects(db.query('select public.web3_sync_info()'),/ACCESS_DENIED/);
+  await identity(engineer);assert.equal((await db.query('select public.web3_sync_info() v')).rows[0].v.connection.canReconnect,false);
+  await assert.rejects(db.query('select public.web3_reconnect_identity()'),/ACCESS_DENIED/);
+  await identity(admin);assert.equal((await db.query('select public.web3_reconnect_identity() v')).rows[0].v.uid,admin);
+  await assert.rejects(db.query('select * from arles_oauth_private.connection'),/permission denied/);
+  await assert.rejects(db.query('select * from arles_web_private.changes'),/permission denied/);
+});
+test('WEB3 comparación respeta desplazamientos, duplicados y correcciones ambiguas',async()=>{
+  await db.exec('reset role');
+  const a={sourceSheet:'Test',sourceRow:2,recordHash:'a',rawValues:['A']};
+  const b={...a,sourceRow:3,recordHash:'b',rawValues:['B']};
+  const compare=async(oldRows,newRows)=>(await db.query('select arles_web_private.compare_records($1,$2) v',[
+    JSON.stringify({records:oldRows}),JSON.stringify({records:newRows})])).rows[0].v;
+  assert.deepEqual(await compare([a,b],[{...b,sourceRow:9},{...a,sourceRow:8}]),{added:0,removed:0,unchanged:2,possibleCorrections:0});
+  assert.deepEqual(await compare([a,{...a,sourceRow:3}],[a]),{added:0,removed:1,unchanged:1,possibleCorrections:0});
+  assert.deepEqual(await compare([a],[{...a,rawValues:['CORREGIDO']}]),{added:1,removed:1,unchanged:0,possibleCorrections:1});
+});
+test('WEB3 sustitución de token es CAS y revalida al actor',async()=>{
+  await db.exec('reset role; begin');
+  const old='a'.repeat(40), fresh='b'.repeat(40);
+  await db.query('insert into arles_oauth_private.connection(token_cipher) values($1)',[old]);
+  const renew=async(expected,actor)=>(await db.query('select public.web1_drive_oauth_connect_renew($1,$2,$3) ok',[fresh,expected,actor])).rows[0].ok;
+  assert.equal(await renew(old,stranger),false);
+  assert.equal(await renew('outdated',admin),false);
+  assert.equal(await renew(old,admin),true);
+  assert.equal(await renew(old,admin),false);
+  await db.exec('rollback');
+});
 test('WEB2 usuario autorizado obtiene resumen real de la proyección',async()=>{
   await identity(admin);
   const {rows}=await db.query('select public.web2_bootstrap() result');
